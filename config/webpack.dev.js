@@ -13,12 +13,14 @@ module.exports = {
     output: {
         path: helpers.root('dist/dev'),
         publicPath: '/',
-        fileName: '[name].bundle.js',
-        chunkFileName: '[id].chunk.js'
+        filename: '[name].bundle.js',
+        chunkFilename: '[id].chunk.js'
     },
+
     resolve: {
         extensions: ['.ts', '.js']
     },
+
     module: {
         rules: [
             {
@@ -36,19 +38,28 @@ module.exports = {
             name: 'common',
             minChunks: Infinity
         }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            chunks: ["vendor", "app"],
+            minChunks: 2
+        }),
+
         new webpack.SourceMapDevToolPlugin({
             "filename": "[file].map[query]",
             "moduleFilenameTemplate": "[resource-path]",
             "fallbackModuleFilenameTemplate": "[resource-path]?[hash]",
             "sourceRoot": "webpack:///"
         }),
+
         new HtmlWebpackPlugin({
-            template: 'config/index.html'
+            template: 'config/index.html',
+            chunks: ['app'],
         }),
+
         new webpack.DefinePlugin({
             'process.env': {
                 'ENV': JSON.stringify(ENV)
             }
-        })
+        }),
     ]
 };
